@@ -54,12 +54,12 @@ EOF;
   }
 
 // Log information to database
-  function logProfilingData($data){
+  function logData($data){
     $table_name = 'performance_template_' . @date("ymd");
 
     $sql = "INSERT DELAYED INTO
      $table_name(ip, page, utime, wtime, stime, mysql_time, mysql_count_queries, mysql_queries, sphinx_time, user_agent, referer)
-     VALUES('".$_SERVER["REMOTE_ADDR"]."',
+     VALUES('".ip2long($_SERVER["REMOTE_ADDR"])."',
       '".$_SERVER["REQUEST_URI"]."',
       '".$data["utime"]."',
       '".$data["wtime"]."',

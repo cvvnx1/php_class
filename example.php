@@ -7,21 +7,34 @@ require("./config/mysql.inc.php");
 // Initialize timer instance and log instance
 $timer = Timer::getInstance();
 $log = new DBQueryLog;
-$log->initConnect("10.100.151.21", "admin", "admin", "performancelog");
+$log->initConnect("mysql.yourdomain.com", "admin", "admin", "performancelog");
 
-// Initialize mysql instance for SQL query
+// Start page timer
+$timer->startTime('Page');
+
+// Run php code
+for ($i=0;$i<10000000;$i++){
+  $s += $i;
+}
+
+// Start mysql timer
+$timer->startTime('MySQL');
+
+// Run mysql query process
 $mysql = new mysql;
 $mysql->connect("10.100.151.21","named","named","named");
-
-// Count timer information
-$timer->startTime('Page');
 $sql = "UPDATE count SET value=value+1 WHERE id=1";
+
+// Stop page timer
+$timer->stopTime('MySQL', $sql);
+
+// Run php code
+$result = $mysql->query($sql);
+
+// Stop page timer
 $timer->stopTime('Page');
 
 // Log performance information to database
-$log->logProfilingData($timer->logData());
-
-// Display the SQL query result
-$result = $mysql->query($sql);
+$log->logData($timer->logData());
 
 ?>
